@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
             username,
             email,
             password: hashedPassword
-        }, { new: true, runValidators: true })
+        })
         const savedUser = await newUser.save()
 
         return NextResponse.json({
