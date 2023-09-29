@@ -7,21 +7,19 @@ import axios from "axios"
 import toast, { Toaster } from 'react-hot-toast';
 
 
-export default function LoginPage() {
+export default function ResetPasswordPage() {
     const router = useRouter()
-    const [user, setUser] = React.useState({
-        email: '',
-        password: '',
-    })
+    const [token,setToken] = React.useState('')
+    const [password, setPassword] = React.useState('')
     const [isButtonDisable, setIsButtonDisabled] = React.useState(false)
     const [loading, setLoading] = React.useState(false)
-    const onLogin = async () => {
+    const resetpassword = async () => {
         try {
             setLoading(true)
-            const response = await axios.post('/api/users/login',user)
+            const response = await axios.post('/api/users/resetpassword',{token,password})
             console.log(response.data)
-            toast.success('Login success')
-            router.push('/profile')
+            toast.success('reset success')
+            router.push('/login')
         } catch (error: any) {
             toast.error(error.response.data.error)
         }finally{
@@ -29,12 +27,13 @@ export default function LoginPage() {
         }
     }
     React.useEffect(() => {
-        if (user.email.length > 0 && user.password.length > 0) {
+        setToken(window.location.search.split("=")[1])
+        if (password.length > 0) {
             setIsButtonDisabled(false)
         } else {
             setIsButtonDisabled(true)
         }
-    }, [user])
+    }, [password])
     return (
         <>
             <div><Toaster
@@ -42,32 +41,21 @@ export default function LoginPage() {
                 reverseOrder={false}
             /></div>
             <div className="flex flex-col items-center justify-center min-h-screen py-2">
-                <h1>{loading ? "Processing" : "Login"}</h1>
+                <h1>{loading ? "Processing" : "Change Password"}</h1>
                 <hr />
-                <label htmlFor="email">Email</label>
-                <input
-                    className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black"
-                    type="text" id="email"
-                    value={user.email}
-                    onChange={(e) => setUser({ ...user, email: e.target.value })}
-                    placeholder="Email"
-                />
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password">New Password</label>
                 <input
                     className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black"
                     type="password" id="password"
-                    value={user.password}
-                    onChange={(e) => setUser({ ...user, password: e.target.value })}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Password"
                 />
                 <button
                     className="p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600"
-                    onClick={onLogin}>
-                    Login here
+                    onClick={resetpassword}>
+                    Reset password
                 </button>
-                <Link href='/forgotpassword' className="text-sm p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:border-gray-600">Forgot password</Link>
-                <Link href='/signup'>Visit signup page</Link>
-                
             </div>
         </>
     )
